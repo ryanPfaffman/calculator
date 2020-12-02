@@ -1469,14 +1469,14 @@ class Calculator extends React.Component {
           })
         }
     } else if (e.key === "%") {
-      if (this.state.string === '') {
+      if (this.state.string === '' && this.state.total != '') {
         this.setState({
           string: "ANS" + e.key,
           disabled_minus: true,
           disabled_operators: true,
           disabled_dot: false,
         })
-      } else {
+      } else if (this.state.string != '') {
         this.setState({
           string: this.state.string + e.key,
           disabled_minus: true,
@@ -1484,7 +1484,7 @@ class Calculator extends React.Component {
           disabled_dot: false,
         })
       }
-    } else if (e.key === "c") {
+    } else if (e.key === "n") {
       if (this.state.total === '') {
         this.setState({
           string: '',
@@ -1504,6 +1504,21 @@ class Calculator extends React.Component {
           disabled_counter: 0,
         })
       }
+    } else if (e.key === "N") {
+      if (this.state.string === "") {
+        this.setState({
+          disabled: true,
+          disabled_operators: true,
+          disabled_minus: false,
+          disabled_dot: false,
+          dot_operator_check: false,
+          disabled_counter: 0,
+          disabled_percent: true,
+        })
+      }
+      this.setState({
+        total: '',
+      })
     } else if (e.key === "0") {
       this.setState({
         string: this.state.string + e.key,
@@ -1529,6 +1544,7 @@ class Calculator extends React.Component {
           disabled_dot: false,
           disabled_minus: false,
           disabled_counter: 0,
+          disabled_percent: true,
         })
       } else {
         this.setState({
@@ -1538,6 +1554,7 @@ class Calculator extends React.Component {
           disabled_dot: false,
           disabled_minus: false,
           disabled_counter: 0,
+          disabled_percent: false,
         })
       }
       this.setState({
@@ -1574,7 +1591,7 @@ class Calculator extends React.Component {
       this.setState({
         total: '',
       })
-    } else if (e.key === "a") {
+    } else if (e.key === "s") {
       if (this.state.total != '') {
         this.setState({
           string: (this.state.string + "ANS"),
@@ -1746,7 +1763,7 @@ class Calculator extends React.Component {
           <tr>
             <td><input className="buttons" type="button" value="ANS" onClick={this.handleClick} /></td>
             <td><input className="buttons" type="button" value="del" onClick={this.handleClick} /></td>
-            <td colSpan="5"><input id="answer_box" type="text" placeholder="shift + c to clear/ a to use ANS" value={this.state.total} /></td>
+            <td colSpan="5"><input id="answer_box" type="text" placeholder="shift + N to clear/ s to use ANS" value={this.state.total} /></td>
           </tr>
         </table>
       </form>
