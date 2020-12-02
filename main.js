@@ -1561,7 +1561,7 @@ class Calculator extends React.Component {
           }
         }
       }
-    } else if (e.key === 'C') {
+    } else if (e.key === 'n') {
       if (this.state.string === '') {
         this.setState({
           disabled_operators: true,
@@ -1703,7 +1703,7 @@ class Calculator extends React.Component {
             <td colSpan="7"><h1 id="table_title">Calculator</h1></td>
           </tr>
           <tr>
-            <td colSpan="7"><input id="number_box" type="text" placeholder="lower case c to clear" value={this.state.string} onClick={this.handleClick} onKeyDown={this.programKeyboard} /></td>
+            <td colSpan="7"><input id="number_box" type="text" placeholder="n to clear" value={this.state.string} onClick={this.handleClick} onKeyDown={this.programKeyboard} /></td>
             <td></td>
             <td></td>
           </tr>
