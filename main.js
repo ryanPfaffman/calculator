@@ -182,6 +182,22 @@ const sqrt = (number) => {
   return Math.sqrt(number);
 }
 
+const log10 = (number) => {
+  return Math.log10(number)
+}
+
+const sin = (number) => {
+  return Math.sin(number);
+}
+
+const cos = (number) => {
+  return Math.cos(number);
+}
+
+const tan = (number) => {
+  return Math.tan(number);
+}
+
 const findIfPreviousNumberIsADecimal = (string) => {
   const stuffToSplitStringWith = ['+','*','÷','^','-','√','(',')'];
   let tempL = [];
@@ -466,6 +482,35 @@ const checkForParenthesesMultiplication = (string) => {
     }
     console.log('listToCheck\n' + listToCheck);
   } return listToCheck.join('');
+}
+
+const checkForLogSinCosTanMultiplication = (string) => {
+  let tempL = [];
+  let tempS = '';
+  const checkLetters = ['S','C','T','L'];
+  const digits = ['0','1','2','3','4','5','6','7','8','9']
+
+  for (let x in string) {
+    if (string[x] === ")" || digits.includes(string[x])) {
+      if (tempS != '') {
+        tempL.push(tempS);
+      }
+      tempL.push(string[x]);
+      tempS = '';
+    } else {
+      tempS += string[x]
+    }
+  } if (tempS != '') {
+    tempL.push(tempS);
+  }
+  console.log("checkForSinCosTanMultiplication\n" + tempL);
+  for (let x in tempL) {
+    if ((tempL[x] === ")" || digits.includes(tempL[x])) && checkLetters.includes(getLetter(tempL[parseInt(x) + 1], 0))) {
+      tempL[x] += "*";
+    }
+  }
+  console.log("after checkForSinCosTanMultiplication\n" + tempL.join(''));
+  return tempL.join('');
 }
 
 const buildStringForCalculation = (string) => {
@@ -756,6 +801,21 @@ const goodbyeParentheses = (list) => {
           list[x] = calculateOutside(list[x]);
           list[x] = replaceAll(list[x], '√');
           list[x] = sqrt(list[x]);
+        } else if (getLetter(list[parseInt(x) - 1], -1) === "N" || getLetter(list[parseInt(x) - 1], -1) === "S" || getLetter(list[parseInt(x) - 1], -1) === "G") {
+          list[x] = calculateOutside(list[x]);
+          if (list[parseInt(x) - 1].includes("SIN")) {
+            list[x] = sin(list[x]);
+            list[parseInt(x) - 1] = replaceAll(list[parseInt(x) - 1], "SIN");
+          } else if (list[parseInt(x) - 1].includes("COS")) {
+            list[x] = cos(list[x]);
+            list[parseInt(x) - 1] = replaceAll(list[parseInt(x) - 1], "COS");
+          } else if (list[parseInt(x) - 1].includes("TAN")) {
+            list[x] = tan(list[x]);
+            list[parseInt(x) - 1] = replaceAll(list[parseInt(x) - 1], "TAN");
+          } else if (list[parseInt(x) - 1].includes("LOG")) {
+            list[x] = log10(list[x]);
+            list[parseInt(x) - 1] = replaceAll(list[parseInt(x) - 1], "LOG");
+          }
         } else {
           list[x] = calculateOutside(list[x]);
         }
@@ -897,6 +957,7 @@ const calculate = (string, stateTotal) => {
   if (string.includes('(')) {
     string = addParentheses(string);
     string = checkForParenthesesMultiplication(string);
+    string = checkForLogSinCosTanMultiplication(string);
   }
 
   string = checkForAns(string, stateTotal);
@@ -938,7 +999,7 @@ const calculate = (string, stateTotal) => {
   }
 }
 
-console.log(calculate("550%%^2÷(550%%^(((2*2^2)"))
+console.log(calculate("SIN(5)COS(5)TAN(TAN(5))"))
 
 class Calculator extends React.Component {
   constructor(props) {
@@ -953,7 +1014,7 @@ class Calculator extends React.Component {
       dot_operator_check: false,
       disabled_counter: 0,
       disabled_percent: true,
-      disabled_pi: true,
+      disabled_pi: false,
       disabled_trig: false,
     }; this.handleClick = this.handleClick.bind(this);
     this.programKeyboard = this.programKeyboard.bind(this);
@@ -1110,9 +1171,21 @@ class Calculator extends React.Component {
           disabled_percent: true,
         })
       }
+    } else if (e.target.value === "LOG") {
+      this.setState({
+        string: this.state.string + e.target.value + "(",
+        disabled: false,
+        disabled_counter: this.state.disabled_counter + 1,
+        disabled_minus: true,
+      })
+      console.log(this.state.disabled_counter);
     } else if (e.target.value === "SIN") {
-      if (digits.includes(getLetter(this.state.string, -1))&& this.state.total === '') {
-        //pass
+      if (digits.includes(getLetter(this.state.string, -1)) === false) {
+        this.setState({
+          string: this.state.string + e.target.value + "(",
+          disabled: false,
+          disabled_counter: this.state.disabled_counter + 1,
+        })
       }
     } else if (e.target.value === ")") {
       if (count(this.state.string, '(') >= 1) {
@@ -1181,6 +1254,12 @@ class Calculator extends React.Component {
           disabled_dot: false,
         })
       }
+    } else if (e.target.value === "COS") {
+      this.setState({
+        string: this.state.string + e.target.value + "(",
+        disabled: false,
+        disabled_counter: this.state.disabled_counter + 1,
+      })
     } else if (e.target.value === "AC") {
       if (this.state.total === '') {
         this.setState({
@@ -1277,6 +1356,14 @@ class Calculator extends React.Component {
       this.setState({
         total: '',
       })
+    } else if (e.target.value === "TAN") {
+      if (digits.includes(getLetter(this.state.string, -1)) === false) {
+        this.setState({
+          string: this.state.string + e.target.value + "(",
+          disabled: false,
+          disabled_counter: this.state.disabled_counter + 1,
+        })
+      }
     } else if (e.target.value === "ANS") {
       if (this.state.total != '') {
         this.setState({
@@ -1285,6 +1372,7 @@ class Calculator extends React.Component {
           disabled_dot: true,
           disabled_minus: false,
           disabled_percent: false,
+          disabled_pi: false,
         })
       }
     } else if (e.target.value === "del") {
@@ -1297,6 +1385,18 @@ class Calculator extends React.Component {
           disabled_minus: false,
         })
       } else if (getLetter(this.state.string, -1) === 'S' && getLetter(this.state.string, -2) === "N") {
+        this.setState({
+          string: this.state.string.slice(0, -3),
+        })
+      } else if (getLetter(this.state.string, -1) === 'S' && getLetter(this.state.string, -2) === "O") {
+        this.setState({
+          string: this.state.string.slice(0, -3),
+        })
+      } else if (getLetter(this.state.string, -1) === 'N' && getLetter(this.state.string, -2) === "I") {
+        this.setState({
+          string: this.state.string.slice(0, -3),
+        })
+      } else if (getLetter(this.state.string, -1) === 'G' && getLetter(this.state.string, -2) === "O") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
@@ -1343,13 +1443,8 @@ class Calculator extends React.Component {
           dot_operator_check: false,
         })
       } else if (getLetter(this.state.string, -1) === ")") {
-        console.log('hi');
-        if (this.state.disabled === true) {
-          this.setState({
-            disabled: false,
-          })
-        }
         this.setState({
+          disabled: false,
           disabled_counter: this.state.disabled_counter + 1,
         })
       } else if (count(this.state.string, "(") === 1) {
@@ -1405,6 +1500,7 @@ class Calculator extends React.Component {
   }
   programKeyboard(e) {
     const charactersToDisableOperatorKeys = ['+','^','-','÷','*'];
+    const digits = ['0','1','2','3','4','5','6','7','8','9'];
 
     if (e.key != '.') {
       this.setState({
@@ -1572,6 +1668,35 @@ class Calculator extends React.Component {
           }
         }
       }
+    } else if (e.key === "l") {
+      this.setState({
+        string: this.state.string + "LOG(",
+        disabled: false,
+        disabled_counter: this.state.disabled_counter + 1,
+        disabled_minus: true,
+      })
+    } else if (e.key === "L") {
+      if (this.state.total === "") {
+        this.setState({
+          disabled: true,
+          disabled_operators: true,
+          disabled_minus: false,
+          disabled_dot: false,
+          dot_operator_check: false,
+          disabled_counter: 0,
+          disabled_percent: true,
+          disabled_pi: false,
+          disabled_trig: false,
+        })
+      }
+      this.setState({
+        string: '',
+      })
+    } else if (e.key === "s") {
+      this.setState({
+        string: this.state.string + "SIN(",
+        disabled_counter: this.state.disabled_counter + 1,
+      })
     } else if (e.key === ")") {
       if (this.state.disabled_counter >= 1) {
         if (count(this.state.string, '(') >= 1) {
@@ -1608,8 +1733,8 @@ class Calculator extends React.Component {
         disabled_percent: false,
       })
     } else if (e.key === "-") {
-      if (getLetter(this.state.string,-1) != "-")
-        if (this.state.string === '') {
+      if (getLetter(this.state.string,-1) != "-" && this.state.disabled_minus === false)
+        if (this.state.string === '' && this.state.total != '') {
           this.setState({
             string: "ANS" + e.key,
             disabled_minus: true,
@@ -1644,7 +1769,13 @@ class Calculator extends React.Component {
           })
         }
       }
-    } else if (e.key === "n") {
+    } else if (e.key === "c") {
+      this.setState({
+        string: this.state.string + "COS(",
+        disabled: false,
+        disabled_counter: this.state.disabled_counter + 1,
+      })
+    } else if (e.key === "L") {
       if (this.state.total === '') {
         this.setState({
           string: '',
@@ -1681,6 +1812,14 @@ class Calculator extends React.Component {
       this.setState({
         total: '',
       })
+    } else if (e.key === "t") {
+      if (digits.includes(getLetter(this.state.string, -1)) === false) {
+        this.setState({
+          string: this.state.string + "TAN(",
+          disabled: false,
+          disabled_counter: this.state.disabled_counter + 1,
+        })
+      }
     } else if (e.key === "0") {
       this.setState({
         string: this.state.string + e.key,
@@ -1747,7 +1886,7 @@ class Calculator extends React.Component {
           }
         }
       }
-    } else if (e.key === 'n') {
+    } else if (e.key === 'N') {
       if (this.state.string === '') {
         this.setState({
           disabled_operators: true,
@@ -1761,7 +1900,7 @@ class Calculator extends React.Component {
       this.setState({
         total: '',
       })
-    } else if (e.key === "s") {
+    } else if (e.key === "n") {
       if (this.state.total != '') {
         this.setState({
           string: (this.state.string + "ANS"),
@@ -1769,6 +1908,7 @@ class Calculator extends React.Component {
           disabled_dot: true,
           disabled_minus: false,
           disabled_percent: false,
+          disabled_pi: false,
         })
       }
     } else if (e.key === "Backspace") {
@@ -1783,6 +1923,18 @@ class Calculator extends React.Component {
           disabled_minus: false,
         })
       } else if (getLetter(this.state.string, -1) === 'S' && getLetter(this.state.string, -2) === "N") {
+        this.setState({
+          string: this.state.string.slice(0, -3),
+        })
+      } else if (getLetter(this.state.string, -1) === 'S' && getLetter(this.state.string, -2) === "O") {
+        this.setState({
+          string: this.state.string.slice(0, -3),
+        })
+      } else if (getLetter(this.state.string, -1) === 'N' && getLetter(this.state.string, -2) === "I") {
+        this.setState({
+          string: this.state.string.slice(0, -3),
+        })
+      } else if (getLetter(this.state.string, -1) === 'G' && getLetter(this.state.string, -2) === "O") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
@@ -1883,7 +2035,7 @@ class Calculator extends React.Component {
             <td colSpan="7"><h1 id="table_title">Calculator</h1></td>
           </tr>
           <tr>
-            <td colSpan="7"><input id="number_box" type="text" placeholder="n to clear" value={this.state.string} onClick={this.handleClick} onKeyDown={this.programKeyboard} /></td>
+            <td colSpan="7"><input id="number_box" type="text" placeholder="shift + l to clear" value={this.state.string} onClick={this.handleClick} onKeyDown={this.programKeyboard} /></td>
             <td></td>
             <td></td>
           </tr>
@@ -1926,7 +2078,7 @@ class Calculator extends React.Component {
           <tr>
             <td><input className="buttons" type="button" value="ANS" onClick={this.handleClick} /></td>
             <td><input className="buttons" type="button" value="del" onClick={this.handleClick} /></td>
-            <td colSpan="5"><input id="answer_box" type="text" placeholder="shift + n to clear/ s to use ANS" value={this.state.total} /></td>
+            <td colSpan="5"><input id="answer_box" type="text" placeholder="shift + n to clear/ n to use ANS" value={this.state.total} /></td>
           </tr>
         </table>
       </form>
