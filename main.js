@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import "./styles.css";
 
+//keysPressed situation
+let keysPressed = {};
+
 //generic functions
 const count = (string, target) => {
   let count = 0;
@@ -16,6 +19,7 @@ const getLetter = (string, index) => {
   let reverseIndex = 0;
 
   if (string === undefined) {
+    console.log("getLetter got received an undefined string again for some reason\n" + string);
     return null;
   }
   if (index < 0) {
@@ -1047,9 +1051,9 @@ class Calculator extends React.Component {
 
     if (e.target.value === "√") {
       this.setState({
-        string: (this.state.string + e.target.value + "("),
+        string: this.state.string + e.target.value + "(",
         disabled: false,
-        disabled_counter: (this.state.disabled_counter + 1),
+        disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
         disabled_minus: false,
         disabled_dot: false,
@@ -1063,7 +1067,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1076,7 +1080,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1089,23 +1093,25 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
       }
     } else if (e.target.value === "÷") {
-      if (this.state.string === '' && this.state.total != '') {
-        this.setState({
-          string: ("ANS" + e.target.value),
-          disabled_operators: true,
-          disabled_dot: false,
-          disabled_percent: true,
-          disabled_enter: true,
-        })
+      if (this.state.disabled_operators === false) {
+        if (this.state.string === '' && this.state.total != '') {
+          this.setState({
+            string: ("ANS" + e.target.value),
+            disabled_operators: true,
+            disabled_dot: false,
+            disabled_percent: true,
+            disabled_enter: true,
+          })
+        }
       } else {
         this.setState({
-          string: (this.state.string + e.target.value),
+          string: this.state.string + e.target.value,
           disabled_operators: true,
           disabled_dot: false,
           disabled_percent: true,
@@ -1161,7 +1167,7 @@ class Calculator extends React.Component {
           disabled_enter: false,
         })
       }
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1197,7 +1203,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1210,7 +1216,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1223,7 +1229,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1288,7 +1294,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1301,7 +1307,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1314,7 +1320,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: false,
         })
@@ -1388,6 +1394,8 @@ class Calculator extends React.Component {
           disabled: true,
           disabled_counter: 0,
           disabled_percent: true,
+          disabled_pi: false,
+          disabled_trig: false,
           disabled_enter: true,
         })
       }
@@ -1399,7 +1407,7 @@ class Calculator extends React.Component {
         disabled_percent: false,
         disabled_enter: false,
       })
-      if (getLetter(this.state.string, -1) === "%") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
         this.setState({
           disabled_dot: true,
         })
@@ -1535,7 +1543,7 @@ class Calculator extends React.Component {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -1547,13 +1555,34 @@ class Calculator extends React.Component {
             disabled_pi: false,
             disabled_trig: false,
             disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (getLetter(this.state.string, -1) === 'S' && getLetter(this.state.string, -2) === "O") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -1565,13 +1594,34 @@ class Calculator extends React.Component {
             disabled_pi: false,
             disabled_trig: false,
             disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (getLetter(this.state.string, -1) === 'N' && getLetter(this.state.string, -2) === "I") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -1583,13 +1633,34 @@ class Calculator extends React.Component {
             disabled_pi: false,
             disabled_trig: false,
             disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (getLetter(this.state.string, -1) === 'G' && getLetter(this.state.string, -2) === "O") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -1602,12 +1673,33 @@ class Calculator extends React.Component {
             disabled_trig: false,
             disabled_enter: true,
           })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
+          })
         }
       } else if (getLetter(this.state.string, -1) === 'N' && getLetter(this.state.string, -2) === "A") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -1619,6 +1711,27 @@ class Calculator extends React.Component {
             disabled_pi: false,
             disabled_trig: false,
             disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -2))) {
@@ -1738,6 +1851,21 @@ class Calculator extends React.Component {
     const charactersToDisableOperatorKeys = ['+','^','-','÷','*'];
     const digits = ['0','1','2','3','4','5','6','7','8','9'];
 
+
+    const input = document.querySelector('input');
+
+
+    input.addEventListener('keydown', e => {
+      keysPressed[e.key] = true;
+    })
+
+    console.log(keysPressed);
+
+    input.addEventListener('keyup', e => {
+      keysPressed = {};
+    })
+
+
     if (e.key != '.') {
       this.setState({
         disabled_pi: false,
@@ -1747,9 +1875,11 @@ class Calculator extends React.Component {
       this.setState({
         string: this.state.string + "√(",
         disabled: false,
-        disabled_counter: (this.state.disabled_counter + 1),
+        disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
         disabled_minus: false,
+        disabled_dot: false,
+        disabled_enter: true,
       })
     } else if (e.key === "7") {
       this.setState({
@@ -1757,23 +1887,39 @@ class Calculator extends React.Component {
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
-    }
-    else if (e.key === "8") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
+    } else if (e.key === "8") {
       this.setState({
         string: this.state.string + e.key,
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
-    }
-     else if (e.key === "9") {
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
+    } else if (e.key === "9") {
       this.setState({
         string: this.state.string + e.key,
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === "/") {
       if (charactersToDisableOperatorKeys.includes(getLetter(this.state.string, -1)) === false && this.state.disabled_operators === false) {
         if (this.state.string === '' && this.state.total != '') {
@@ -1782,6 +1928,7 @@ class Calculator extends React.Component {
             disabled_operators: true,
             disabled_dot: false,
             disabled_percent: true,
+            disabled_enter: true,
           })
         } else {
           if (this.state.string != '') {
@@ -1790,18 +1937,20 @@ class Calculator extends React.Component {
               disabled_operators: true,
               disabled_dot: false,
               disabled_percent: true,
+              disabled_enter: true,
             })
           }
         }
       }
     } else if (e.key === "^") {
-      if (charactersToDisableOperatorKeys.includes(getLetter(this.state.string, -1)) === false) {
+      if (charactersToDisableOperatorKeys.includes(getLetter(this.state.string, -1)) === false && this.state.disabled_operators === false) {
         if (this.state.string === '' && this.state.total != '') {
           this.setState({
             string: "ANS" + e.key,
             disabled_operators: true,
             disabled_dot: false,
             disabled_percent: true,
+            disabled_enter: true,
           })
         } else {
           if (this.state.string != '') {
@@ -1810,6 +1959,7 @@ class Calculator extends React.Component {
               disabled_operators: true,
               disabled_dot: false,
               disabled_percent: true,
+              disabled_enter: true,
             })
           }
         }
@@ -1822,6 +1972,7 @@ class Calculator extends React.Component {
             disabled_operators: false,
             disabled_minus: false,
             disabled_percent: true,
+            disabled_enter: false,
           })
         } else if (this.state.string != '') {
           this.setState({
@@ -1829,6 +1980,7 @@ class Calculator extends React.Component {
             disabled_operators: false,
             disabled_minus: false,
             disabled_percent: true,
+            disabled_enter: false,
           })
         } else if (this.state.string === '' && this.state.total != '') {
           this.setState({
@@ -1836,6 +1988,12 @@ class Calculator extends React.Component {
             disabled_operators: false,
             disabled_minus: false,
             disabled_percent: true,
+            disabled_enter: false,
+          })
+        }
+        if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+          this.setState({
+            disabled_dot: false,
           })
         }
       }
@@ -1849,6 +2007,7 @@ class Calculator extends React.Component {
           disabled_dot: false,
           disabled_operators: true,
           disabled_percent: true,
+          disabled_enter: true,
         })
       } else {
         this.setState({
@@ -1859,6 +2018,7 @@ class Calculator extends React.Component {
           disabled_dot: false,
           disabled_operators: true,
           disabled_percent: true,
+          disabled_enter: true,
         });
       }
     } else if (e.key === "4") {
@@ -1867,21 +2027,39 @@ class Calculator extends React.Component {
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === "5") {
       this.setState({
         string: this.state.string + e.key,
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === "6") {
       this.setState({
         string: this.state.string + e.key,
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === "*") {
       if (charactersToDisableOperatorKeys.includes(getLetter(this.state.string, -1)) === false && this.state.disabled_operators === false) {
         if (this.state.string === '' && this.state.total != '') {
@@ -1891,6 +2069,7 @@ class Calculator extends React.Component {
             dot_operator_check: false,
             disabled_dot: false,
             disabled_percent: true,
+            disabled_enter: true,
           })
         } else {
           if (this.state.string != '') {
@@ -1900,6 +2079,7 @@ class Calculator extends React.Component {
               dot_operator_check: false,
               disabled_dot: false,
               disabled_percent: true,
+              disabled_enter: true,
             })
           }
         }
@@ -1911,6 +2091,7 @@ class Calculator extends React.Component {
         disabled_counter: this.state.disabled_counter + 1,
         disabled_minus: true,
         disabled_operators: true,
+        disabled_enter: true,
       })
     } else if (e.key === "L") {
       if (this.state.total === "") {
@@ -1924,10 +2105,12 @@ class Calculator extends React.Component {
           disabled_percent: true,
           disabled_pi: false,
           disabled_trig: false,
+          disabled_enter: true,
         })
       }
       this.setState({
         string: '',
+        disabled_enter: true,
       })
     } else if (e.key === "s") {
       this.setState({
@@ -1935,6 +2118,7 @@ class Calculator extends React.Component {
         disabled: false,
         disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
+        disabled_enter: true,
       })
     } else if (e.key === ")") {
       if (this.state.disabled_counter >= 1) {
@@ -1956,21 +2140,39 @@ class Calculator extends React.Component {
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === "2") {
       this.setState({
         string: this.state.string + e.key,
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === "3") {
       this.setState({
         string: this.state.string + e.key,
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === "-") {
       if (getLetter(this.state.string,-1) != "-" && this.state.disabled_minus === false)
         if (this.state.string === '' && this.state.total != '') {
@@ -1980,6 +2182,7 @@ class Calculator extends React.Component {
             disabled_operators: true,
             disabled_dot: false,
             disabled_percent: false,
+            disabled_enter: true,
           })
         } else {
           this.setState({
@@ -1988,6 +2191,7 @@ class Calculator extends React.Component {
             disabled_operators: true,
             disabled_dot: false,
             disabled_percent: false,
+            disabled_enter: true,
           })
         }
     } else if (e.key === "%") {
@@ -1998,6 +2202,7 @@ class Calculator extends React.Component {
             disabled_minus: true,
             disabled_operators: true,
             disabled_dot: false,
+            disabled_enter: false,
           })
         } else if (this.state.string != '') {
           this.setState({
@@ -2005,17 +2210,23 @@ class Calculator extends React.Component {
             disabled_minus: true,
             disabled_operators: true,
             disabled_dot: false,
+            disabled_enter: false,
+          })
+        }
+        if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+          this.setState({
+            disabled_dot: false,
           })
         }
       }
-    } else if (e.key === "c") {
+    } else if (e.key === "c" && Object.keys(keysPressed).length <= 1) {
       this.setState({
         string: this.state.string + "COS(",
         disabled: false,
         disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
       })
-    } else if (e.key === "L") {
+    } else if (e.key === "C" && Object.keys(keysPressed).length <= 2) {
       if (this.state.total === '') {
         this.setState({
           string: '',
@@ -2037,7 +2248,7 @@ class Calculator extends React.Component {
           disabled_percent: true,
         })
       }
-    } else if (e.key === "N") {
+    } else if (e.key === "T") {
       if (this.state.string === "") {
         this.setState({
           disabled: true,
@@ -2058,6 +2269,7 @@ class Calculator extends React.Component {
         disabled: false,
         disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
+        disabled_enter: true,
       })
     } else if (e.key === "0") {
       this.setState({
@@ -2065,7 +2277,13 @@ class Calculator extends React.Component {
         disabled_operators: false,
         disabled_minus: false,
         disabled_percent: false,
+        disabled_enter: false,
       })
+      if (getLetter(this.state.string, -1) === "%" && findIfPreviousNumberIsADecimal(this.state.string) === false) {
+        this.setState({
+          disabled_dot: false,
+        })
+      }
     } else if (e.key === ".") {
       if (getLetter(this.state.string, -1) != ".") {
         if (this.state.disabled_dot === false) {
@@ -2076,6 +2294,7 @@ class Calculator extends React.Component {
               disabled_minus: true,
               disabled_percent: true,
               disabled_pi: true,
+              disabled_enter: true,
           })
         }
       }
@@ -2089,6 +2308,7 @@ class Calculator extends React.Component {
             disabled_minus: false,
             disabled_counter: 0,
             disabled_percent: true,
+            disabled_enter: true,
           })
         } else {
           this.setState({
@@ -2099,6 +2319,7 @@ class Calculator extends React.Component {
             disabled_minus: false,
             disabled_counter: 0,
             disabled_percent: false,
+            disabled_enter: true,
           })
         }
         this.setState({
@@ -2114,6 +2335,7 @@ class Calculator extends React.Component {
               disabled_operators: true,
               disabled_dot: true,
               disabled_percent: true,
+              disabled_enter: true,
             })
           } else {
             if (this.state.string != '') {
@@ -2122,6 +2344,7 @@ class Calculator extends React.Component {
                 disabled_operators: true,
                 disabled_dot: false,
                 disabled_percent: true,
+                disabled_enter: true,
               })
             }
           }
@@ -2136,20 +2359,22 @@ class Calculator extends React.Component {
           disabled_exponent: true,
           dot_operator_check: false,
           disabled_percent: true,
+          disabled_enter: true,
         })
       }
       this.setState({
         total: '',
       })
-    } else if (e.key === "n") {
+    } else if (e.key === "a" && Object.keys(keysPressed).length <= 1) {
       if (this.state.total != '') {
         this.setState({
-          string: (this.state.string + "ANS"),
+          string: this.state.string + "ANS",
           disabled_operators: false,
           disabled_dot: true,
           disabled_minus: false,
           disabled_percent: false,
           disabled_pi: false,
+          disabled_enter: false,
         })
       }
     } else if (e.key === "Backspace") {
@@ -2158,7 +2383,6 @@ class Calculator extends React.Component {
       })
       if (this.state.string.length === 1 && this.state.total === "") {
         this.setState({
-          string: this.state.string.slice(0, -1),
           disabled: true,
           disabled_operators: true,
           disabled_minus: false,
@@ -2168,8 +2392,10 @@ class Calculator extends React.Component {
           disabled_percent: true,
           disabled_pi: false,
           disabled_trig: false,
+          disabled_enter: true,
         })
       } else if (this.state.string.length === 1 && this.state.total != '') {
+        console.log("it runs");
         this.setState({
           disabled: true,
           disabled_operators: false,
@@ -2179,9 +2405,9 @@ class Calculator extends React.Component {
           disabled_percent: true,
           disabled_pi: false,
           disabled_trig: false,
+          disabled_enter: true,
         })
-      }
-      if (['+','*','÷','^'].includes(getLetter(this.state.string, -2))) {
+      } else if (['+','*','÷','^'].includes(getLetter(this.state.string, -2))) {
         this.setState({
           disabled_operators: true,
           disabled_minus: false,
@@ -2190,7 +2416,7 @@ class Calculator extends React.Component {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -2201,13 +2427,35 @@ class Calculator extends React.Component {
             disabled_percent: true,
             disabled_pi: false,
             disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (getLetter(this.state.string, -1) === 'S' && getLetter(this.state.string, -2) === "O") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -2218,13 +2466,35 @@ class Calculator extends React.Component {
             disabled_percent: true,
             disabled_pi: false,
             disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (getLetter(this.state.string, -1) === 'N' && getLetter(this.state.string, -2) === "I") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -2235,13 +2505,35 @@ class Calculator extends React.Component {
             disabled_percent: true,
             disabled_pi: false,
             disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (getLetter(this.state.string, -1) === 'G' && getLetter(this.state.string, -2) === "O") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -2252,13 +2544,35 @@ class Calculator extends React.Component {
             disabled_percent: true,
             disabled_pi: false,
             disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (getLetter(this.state.string, -1) === 'N' && getLetter(this.state.string, -2) === "A") {
         this.setState({
           string: this.state.string.slice(0, -3),
         })
-        if (this.state.string.length === 3) {
+        if (this.state.string.length === 3 && this.state.total === "") {
           this.setState({
             disabled: true,
             disabled_operators: true,
@@ -2269,6 +2583,28 @@ class Calculator extends React.Component {
             disabled_percent: true,
             disabled_pi: false,
             disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (this.state.string.length === 3 && this.state.total != '') {
+          this.setState({
+            disabled: true,
+            disabled_operators: false,
+            disabled_minus: false,
+            dot_operator_check: false,
+            disabled_counter: 0,
+            disabled_percent: true,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: true,
+          })
+        } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
+            this.setState({
+            disabled_operators: false,
+            disabled_minus: false,
+            disabled_percent: false,
+            disabled_pi: false,
+            disabled_trig: false,
+            disabled_enter: false,
           })
         }
       } else if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -2))) {
@@ -2368,7 +2704,7 @@ class Calculator extends React.Component {
             <td colSpan="7"><h1 id="table_title">Calculator</h1></td>
           </tr>
           <tr>
-            <td colSpan="7"><input id="number_box" type="text" placeholder="shift + l to clear" value={this.state.string} onClick={this.handleClick} onKeyDown={this.programKeyboard} /></td>
+            <td colSpan="7"><input id="number_box" type="text" placeholder="shift + c to clear" value={this.state.string} onClick={this.handleClick} onKeyDown={this.programKeyboard} /></td>
             <td></td>
             <td></td>
           </tr>
@@ -2411,7 +2747,7 @@ class Calculator extends React.Component {
           <tr>
             <td><input className="buttons" type="button" value="ANS" onClick={this.handleClick} /></td>
             <td><input className="buttons" type="button" value="del" onClick={this.handleClick} /></td>
-            <td colSpan="5"><input id="answer_box" type="text" placeholder="shift + n to clear/ n to use ANS" value={this.state.total} /></td>
+            <td colSpan="5"><input id="answer_box" type="text" placeholder="shift + t to clear/ a to use ANS" value={this.state.total} /></td>
           </tr>
         </table>
       </form>
