@@ -1,0 +1,86 @@
+html {
+  background-color: grey;
+}
+
+body {
+  background-image: url("images/table_background.jpeg");
+  min-height: 100vh;
+  margin: auto;
+  margin-top: auto;
+}
+
+#table {
+  margin: 0 auto;
+  background-color: white;
+  table-layout: fixed;
+  max-height: 100%;
+  background-image: url("images/table_background.jpeg");
+}
+
+#table_title {
+  text-align: center;
+  font-family: Impact, Charcoal, sans-serif;
+  font-size: 65px;
+  text-shadow: 1.3px 1.3px aqua;
+  color: red;
+}
+
+#number_box, #answer_box {
+  height: 75px;
+  width: 100%;
+  font-size: 50px;
+}
+
+#number_box {
+  margin-top: -5px;
+}
+
+.buttons {
+  padding: 25px 25px;
+  width: 100%;
+  background-color: aqua;
+  font-size: 20px;
+}
+
+.buttons:disabled:hover {
+  background-color: aqua;
+  cursor: auto;
+}
+
+.buttons:hover, .clearTotal:hover {
+  background-color: red;
+  cursor: pointer;
+}
+
+.clearTotal {
+  padding: 25px 25px;
+  width: 100%;
+  background-color: aqua;
+  font-size: 1em;
+}
+
+#number_box {
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  padding-bottom: 0;
+  margin-top: 0;
+  font-weight: 500;
+}
+
+#number_box::placeholder, #answer_box::placeholder {
+  font-size: 25px;
+}
+
+@media only screen and (max-width: 480px) {
+  .buttons {
+    padding: 10px 10px;
+    font-size: 100%;
+  }
+
+  #number_box, #answer_box {
+    height: 50px;
+    font-size: 20px;
+    padding: 25px 25px;
+  }
+}
