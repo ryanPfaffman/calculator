@@ -850,7 +850,7 @@ const calculateOutside = (string) => {
     }
   }
 
-  return total;
+  return total.toString();
 }
 
 const goodbyeParentheses = (list) => {
