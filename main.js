@@ -231,6 +231,43 @@ const findIfPreviousNumberIsADecimal = (string) => {
   }
 }
 
+const consecutiveDecimals = (string) => {
+  let c = 0;
+  let digit;
+  let whereToSlice;
+  let checkChar = '';
+  if (string.includes(".")) {
+    for (let x = 0; x <= string.length - 1; x++) {
+      checkChar = string[parseInt(x) - 1];
+      if (checkChar === string[x]) {
+        c++;
+      } else {
+        c = 0;
+      }
+      if (c === 7) {
+        digit = checkChar;
+        whereToSlice = parseInt(x);
+      }
+    }
+    if (digit) {
+      if (parseInt(digit) >= 5 && parseInt(digit) != 9) {
+        string = string.slice(0, whereToSlice);
+        string += digit + digit + (parseInt(digit) + 1).toString();
+      } else if (parseInt(digit) === 9) {
+        if (getLetter(string, -1) === "9" || getLetter(string, -1) === "8") {
+          string = Math.round(parseFloat(string)).toString();
+        } else {
+          // do absolutely nothing
+        }
+      } else {
+        string = string.slice(0, whereToSlice);
+        string += digit + digit + digit;
+      }
+    }
+  }
+  return string;
+}
+
 const findNumberInString = (string) => {
   const digits = ['0','1','2','3','4','5','6','7','8','9'];
 
@@ -813,7 +850,7 @@ const calculateOutside = (string) => {
     }
   }
 
-  return total.toString();
+  return total;
 }
 
 const goodbyeParentheses = (list) => {
@@ -1061,11 +1098,10 @@ const calculate = (string, stateTotal) => {
     alert("Divide by 0");
     return '';
   } else {
+    total = consecutiveDecimals(total.toString());
     return total.toString();
   }
 }
-
-console.log(calculate("550÷((550÷30-18)*60"));
 
 class Calculator extends React.Component {
   constructor(props) {
