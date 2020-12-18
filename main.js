@@ -19,7 +19,7 @@ const getLetter = (string, index) => {
   let reverseIndex = 0;
 
   if (string === undefined) {
-    console.log("getLetter got received an undefined string again for some reason\n" + string);
+    console.log("getLetter received an undefined string again for some reason\n" + string);
     return null;
   }
   if (index < 0) {
@@ -812,6 +812,7 @@ const calculateOutside = (string) => {
       total = parseFloat(string);
     }
   }
+
   return total.toString();
 }
 
@@ -1063,6 +1064,8 @@ const calculate = (string, stateTotal) => {
     return total.toString();
   }
 }
+
+console.log(calculate("550÷((550÷30-18)*60"));
 
 class Calculator extends React.Component {
   constructor(props) {
