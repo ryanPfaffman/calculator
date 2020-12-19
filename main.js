@@ -2059,6 +2059,29 @@ class Calculator extends React.Component {
           disabled_enter: true,
         })
       }
+      if (stringLen === 1 && stateTotalS != "") {
+        this.setState({
+          disabled_operators: false,
+          disabled_minus: false,
+          disabled_enter: true,
+          disabled_pi: false,
+          disabled_percent: false,
+          disabled_trig: false,
+          disabled: true,
+          disabled_counter: 0
+        })
+      } else if (stringLen === 1 && stateTotalS === "") {
+        this.setState({
+          disabled_operators: true,
+          disabled_minus: false,
+          disabled_enter: true,
+          disabled_pi: false,
+          disabled_percent: true,
+          disabled_trig: false,
+          disabled: true,
+          disabled_counter: 0
+        })
+      }
     }
   }
   programKeyboard(e) {
@@ -3038,6 +3061,29 @@ class Calculator extends React.Component {
       if(['+','-','*','÷','^','('].includes(string_2)) {
         this.setState({
           disabled_enter: true,
+        })
+      }
+      if (stringLen === 1 && stateTotalS != "") {
+        this.setState({
+          disabled_operators: false,
+          disabled_minus: false,
+          disabled_enter: true,
+          disabled_pi: false,
+          disabled_percent: false,
+          disabled_trig: false,
+          disabled: true,
+          disabled_counter: 0
+        })
+      } else if (stringLen === 1 && stateTotalS === "") {
+        this.setState({
+          disabled_operators: true,
+          disabled_minus: false,
+          disabled_enter: true,
+          disabled_pi: false,
+          disabled_percent: true,
+          disabled_trig: false,
+          disabled: true,
+          disabled_counter: 0
         })
       }
     }
