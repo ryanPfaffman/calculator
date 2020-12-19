@@ -24,7 +24,7 @@ const getLetter = (string, index) => {
   }
   if (index < 0) {
     for (let x = string.length - 1; x >= 0; x--) {
-      reverseIndex = reverseIndex - 1;
+      reverseIndex -= 1;
       if (reverseIndex === index) {
         return string[x];
         break;
@@ -206,6 +206,8 @@ const tan = (number) => {
   return Math.tan(number);
 }
 
+//used so computer knows whether to disabled the dot if using a percentage so I
+//don't enter incorrect expressions hopefully
 const findIfPreviousNumberIsADecimal = (string) => {
   const stuffToSplitStringWith = ['+','*','÷','^','-','√','(',')'];
   let tempL = [];
@@ -231,7 +233,11 @@ const findIfPreviousNumberIsADecimal = (string) => {
   }
 }
 
+console.log("decimal thing\n" + findIfPreviousNumberIsADecimal("23+"));
+
+//takes the expression to 10 digits long and rounds up the .5555555555 to .555555556
 const consecutiveDecimals = (string) => {
+  console.log("beginning of consecutiveDecimals\n" + string);
   let c = 0;
   let digit;
   let whereToSlice;
@@ -265,9 +271,11 @@ const consecutiveDecimals = (string) => {
       }
     }
   }
+  console.log("end of consecutiveDecimals\n" + string);
   return string;
 }
 
+//used in checkForPercents
 const findNumberInString = (string) => {
   const digits = ['0','1','2','3','4','5','6','7','8','9'];
 
@@ -279,6 +287,7 @@ const findNumberInString = (string) => {
   } return false;
 }
 
+//used to add Parentheses to expression if there are some missing
 const findNumberOfParentheses = (string) => {
   let count = 0;
 
@@ -710,6 +719,7 @@ const removeNegativeHolders = (list) => {
   return tempL;
 }
 
+//main calculation function. I had to write a calulation function outside of calculate() so program would only alert once
 const calculateOutside = (string) => {
   let total = 0;
   let tempL = [];
@@ -853,6 +863,7 @@ const calculateOutside = (string) => {
   return total.toString();
 }
 
+//messed this up 100 times at least. Definitely could be faster
 const goodbyeParentheses = (list) => {
   let stringToReturn = '';
   let goodbyeParenthesesList2 = [];
@@ -2563,6 +2574,7 @@ class Calculator extends React.Component {
       this.setState({
         string: this.state.string.slice(0, -1),
       })
+      /*
       if (getLetter(this.state.string, -1) === ")") {
         this.setState({
           disabled: false,
@@ -2602,6 +2614,7 @@ class Calculator extends React.Component {
           disabled_minus: false,
         })
       }
+      */
       if (getLetter(this.state.string, -1) === 'G' && getLetter(this.state.string, -2) === "O") {
         console.log(this.state.string);
         if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
@@ -2791,6 +2804,7 @@ class Calculator extends React.Component {
             disabled_enter: true,
           })
         }
+        /*
         if (['0','1','2','3','4','5','6','7','8','9'].includes(getLetter(this.state.string, -4))) {
             this.setState({
             disabled_operators: false,
@@ -2929,6 +2943,8 @@ class Calculator extends React.Component {
           disabled_enter: true,
           disabled_pi: true,
         })
+      }
+      */
       }
     }
   }
