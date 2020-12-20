@@ -2082,6 +2082,15 @@ class Calculator extends React.Component {
           disabled_counter: 0
         })
       }
+      if (string_2 === "(") {
+        this.setState({
+          disabled_operators: true,
+          disabled_minus: false,
+          disabled_enter: true,
+          disabled_percent: true,
+          disabled_pi: false
+        })
+      }
     }
   }
   programKeyboard(e) {
@@ -3084,6 +3093,15 @@ class Calculator extends React.Component {
           disabled_trig: false,
           disabled: true,
           disabled_counter: 0
+        })
+      }
+      if (string_2 === "(") {
+        this.setState({
+          disabled_operators: true,
+          disabled_minus: false,
+          disabled_enter: true,
+          disabled_percent: true,
+          disabled_pi: false
         })
       }
     }
