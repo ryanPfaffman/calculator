@@ -1992,6 +1992,11 @@ class Calculator extends React.Component {
           disabled_counter: (this.state.disabled_counter - 1),
           disabled_operators: true,
         })
+        if (this.state.disabled_counter === 1) {
+          this.setState({
+            disabled: true,
+          })
+        }
       } else if (this.state.disabled_counter === 1) {
         this.setState({
           disabled: true,
@@ -3005,10 +3010,11 @@ class Calculator extends React.Component {
           disabled_counter: (this.state.disabled_counter - 1),
           disabled_operators: true,
         })
-      } else if (this.state.disabled_counter === 1) {
-        this.setState({
-          disabled: true,
-        })
+        if (this.state.disabled_counter === 1) {
+          this.setState({
+            disabled: true,
+          })
+        }
       } else if (['+','-','÷'].includes(string_2)) {
         this.setState({
           disabled_minus: false,
