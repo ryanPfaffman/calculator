@@ -233,9 +233,7 @@ const findIfPreviousNumberIsADecimal = (string) => {
   }
 }
 
-console.log("decimal thing\n" + findIfPreviousNumberIsADecimal("23+"));
-
-//takes the expression to 10 digits long and rounds up the .5555555555 to .555555556
+//takes the expression to 10 digits long and rounds up the > .5555555555 to .555555556 etc.
 const consecutiveDecimals = (string) => {
   console.log("beginning of consecutiveDecimals\n" + string);
   let c = 0;
