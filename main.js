@@ -1154,7 +1154,7 @@ class Calculator extends React.Component {
         disabled: false,
         disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
-        disabled_minus: false,
+        disabled_minus: true,
         disabled_dot: false,
       })
     } else if (e.target.value === "7") {
@@ -2241,7 +2241,7 @@ class Calculator extends React.Component {
         disabled: false,
         disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
-        disabled_minus: false,
+        disabled_minus: true,
         disabled_dot: false,
         disabled_enter: true,
       })
