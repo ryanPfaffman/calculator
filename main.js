@@ -763,6 +763,7 @@ const calculateOutside = (string) => {
   console.log("before tempL\n" + string);
 
   if (string.includes("div0")) {
+    console.log("this is triggered");
     return "div0";
   } else if (string.includes("Infinity")) {
     return "Infinity";
@@ -883,6 +884,11 @@ const goodbyeParentheses = (list) => {
 
   console.log('goodbyeParentheses list\n' + list);
 
+  if (list.join("").includes("div0")) {
+    console.log("this is also triggered");
+    return "div0";
+  }
+
   for (let x in list) {
     if (list[x].includes('(')) {
       if (list[x].includes(')')) {
@@ -890,6 +896,10 @@ const goodbyeParentheses = (list) => {
         list[x] = replaceAll(list[x], '(');
         list[x] = replaceAll(list[x], ')');
         list[x] = calculateOutside(list[x]);
+
+        if (list[x].includes("div0")) {
+          return "div0";
+        }
 
         if (getLetter(list[parseInt(x) - 1], -1) === "N" || getLetter(list[parseInt(x) - 1], -1) === "S" || getLetter(list[parseInt(x) - 1], -1) === "G") {
           list[x] = calculateOutside(list[x]);
@@ -905,12 +915,17 @@ const goodbyeParentheses = (list) => {
           } else if (list[parseInt(x) - 1].includes("LOG")) {
             if (list[x][0] === '-') {
               return "nonreal";
+            } else if (list[x].includes("div0")) {
+              return "div0";
             }
             list[x] = log10(list[x]);
             list[parseInt(x) - 1] = replaceAll(list[parseInt(x) - 1], "LOG");
           }
         } else if (getLetter(list[parseInt(x) - 1], -1) === "√" || (getLetter(list[parseInt(x) - 1], -1) === "(" && getLetter(list[parseInt(x) - 1], -2) === "√") || (getLetter(list[parseInt(x) - 1], -1) === "(" && getLetter(list[parseInt(x) - 1], -2) === "√")) {
             list[x] = calculateOutside(list[x]);
+            if (list[x].includes("div0")) {
+              return "div0";
+            }
             if (list[parseInt(x) - 1].includes("√") && list[parseInt(x) - 1] != "√" && list[parseInt(x) - 1] != "(√") {
               list[x] = sqrt(list[x]);
               list[parseInt(x) - 1] = replaceAll(list[parseInt(x) - 1], "√");
@@ -921,6 +936,8 @@ const goodbyeParentheses = (list) => {
               console.log(list[x][0]);
               if (list[x][0] === "-") {
                 return 'nonreal';
+              } else if (list[x].includes("div0")) {
+                return "div0";
               }
               list[x] = sqrt(list[x]);
               console.log("after\n" + list[x]);
@@ -933,6 +950,9 @@ const goodbyeParentheses = (list) => {
             }
           } else {
             list[x] = calculateOutside(list[x]);
+            if (list[x].includes("div0")) {
+              return "div0";
+            }
           }
       }
     }
