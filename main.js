@@ -244,8 +244,6 @@ const findIfPreviousNumberIsADecimal = (string) => {
   return false
 }
 
-console.log(findIfPreviousNumberIsADecimal("6.5+"))
-
 //takes the expression to 10 digits long and rounds up the > .5555555555 to .555555556 etc.
 const consecutiveDecimals = (string) => {
   console.log("beginning of consecutiveDecimals\n" + string);
@@ -536,6 +534,19 @@ const addParentheses = (string) => {
   } return string;
 }
 
+const compareTwoLists = (lst1, lst2) => {
+  if (lst1.length != lst2.length) {
+    return false;
+  }
+  for (let x = 0; x < lst1.length; x++) {
+    if (lst1[x] != lst2[x]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 const checkForParenthesesMultiplication = (string) => {
   const digits = ['0','1','2','3','4','5','6','7','8','9'];
 
@@ -787,7 +798,19 @@ const calculateOutside = (string) => {
 
   console.log("before removeNegativeHolders\n" + tempL);
 
+  let testL = tempL;
   tempL = removeNegativeHolders(tempL);
+
+  let stringWasChanged = false;
+
+  console.log("TDFSDDFS");
+  console.log(tempL === testL);
+
+  if (compareTwoLists(testL, tempL) === false) {
+    stringWasChanged = true;
+  }
+
+  console.log("stringWasChanged\n" + stringWasChanged);
 
   console.log('after removeNegativeHolders\n' + tempL);
 
@@ -803,7 +826,7 @@ const calculateOutside = (string) => {
   let booleanOfCheckForLegitMinusSign = checkForLegitMinusSigns(negativesRemovedString);
 
   for (let x in tempL) {
-    count = count + 1;
+    count += 1;
     if (operatorsForOtherCalculation.includes(tempL[x]) && booleanOfCheckForLegitMinusSign === true) {
       if (tempL[x] === '+') {
         if (total === 0) {
@@ -833,6 +856,7 @@ const calculateOutside = (string) => {
           } else if (includesDivOrMulti(tempL[parseInt(x) - 1]) === false && includesDivOrMulti(tempL[parseInt(x) + 1])) {
             total = parseFloat(tempL[parseInt(x) - 1]) - divAndMulti(tempL[parseInt(x) + 1])
           } else if (includesDivOrMulti(tempL[parseInt(x) - 1]) && includesDivOrMulti(tempL[parseInt(x) + 1]) === false) {
+            console.log("this one should trigger");
             total = divAndMulti(tempL[parseInt(x) - 1]) - parseFloat(tempL[parseInt(x) + 1]);
           } else {
             total = parseFloat(tempL[parseInt(x) - 1]) - parseFloat(tempL[parseInt(x) + 1]);
@@ -851,8 +875,8 @@ const calculateOutside = (string) => {
       total = parseFloat(tempL[x]);
     }
   }
-  if (negativesRemovedString.includes('*') || negativesRemovedString.includes('÷')) {
-    console.log('this should trigger');
+  if ((negativesRemovedString.includes('*') || negativesRemovedString.includes('÷')) && (stringWasChanged === true)) {
+    console.log('this should trigger23423');
     console.log(total);
     console.log(negativesRemovedString);
     console.log(total);
@@ -1049,6 +1073,7 @@ const divAndMulti = (string) => {
   calculateExponents(tempL);
 
 
+  console.log("divAndMulti tempL\n" + tempL);
 
   for (let x in tempL) {
     if (total === 0) {
@@ -1268,7 +1293,9 @@ class Calculator extends React.Component {
     } else if (e.target.value === "^") {
       if (this.state.string === '') {
         this.setState({
-          string: "ANS" + e.target.value,
+          string: "ANS" + e.target.value + "(",
+          disabled: false,
+          disabled_counter: this.state.disabled_counter + 1,
           disabled_operators: true,
           disabled_minus: false,
           disabled_dot: false,
@@ -1278,7 +1305,9 @@ class Calculator extends React.Component {
         })
       } else {
       this.setState({
-        string: this.state.string + e.target.value,
+        string: this.state.string + e.target.value + "(",
+        disabled: false,
+        disabled_counter: this.state.disabled_counter + 1,
         disabled_operators: true,
         disabled_minus: false,
         disabled_dot: false,
@@ -2357,7 +2386,9 @@ class Calculator extends React.Component {
       if (charactersToDisableOperatorKeys.includes(getLetter(this.state.string, -1)) === false && this.state.disabled_operators === false) {
         if (this.state.string === '' && this.state.total != '') {
           this.setState({
-            string: "ANS" + e.key,
+            string: "ANS" + e.key + "(",
+            disabled: false,
+            disabled_counter: this.state.disabled_counter + 1,
             disabled_operators: true,
             disabled_dot: false,
             disabled_percent: true,
@@ -2366,7 +2397,9 @@ class Calculator extends React.Component {
         } else {
           if (this.state.string != '') {
             this.setState({
-              string: this.state.string + e.key,
+              string: this.state.string + e.key + "(",
+              disabled: false,
+              disabled_counter: this.state.disabled_counter + 1,
               disabled_operators: true,
               disabled_dot: false,
               disabled_percent: true,
