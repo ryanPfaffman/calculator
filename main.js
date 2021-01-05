@@ -251,8 +251,13 @@ const consecutiveDecimals = (string) => {
   let digit;
   let whereToSlice;
   let checkChar = '';
+  let weird9s = false;
+  let firstDigit = "";
   if (string.includes(".")) {
-    for (let x = 0; x <= string.length - 1; x++) {
+    for (let x = 0; x < string.length; x++) {
+      if (string[x] === ".") {
+        firstDigit = string[x + 1];
+      }
       checkChar = string[parseInt(x) - 1];
       if (checkChar === string[x]) {
         c++;
@@ -269,10 +274,10 @@ const consecutiveDecimals = (string) => {
         string = string.slice(0, whereToSlice);
         string += digit + digit + (parseInt(digit) + 1).toString();
       } else if (parseInt(digit) === 9) {
-        if (getLetter(string, -1) === "9" || getLetter(string, -1) === "8") {
+        if ((getLetter(string, -1) === "9" || getLetter(string, -1) === "8") && firstDigit === "9") {
           string = Math.round(parseFloat(string)).toString();
         } else {
-          // do absolutely nothing
+          string = roundDecimal(string);
         }
       } else {
         string = string.slice(0, whereToSlice);
@@ -282,6 +287,29 @@ const consecutiveDecimals = (string) => {
   }
   console.log("end of consecutiveDecimals\n" + string);
   return string;
+}
+
+const roundDecimal = (string) => {
+  let pastDecimal = false;
+  let rtnS = "";
+
+  for (let x = 0; x < string.length; x++) {
+    if (string[x] === ".") {
+      pastDecimal = true;
+    }
+
+    if (pastDecimal) {
+      if (string[x] === "9" && string[x + 1] === "9" && string[x + 2] === "9" && string[x + 3] === "9") {
+        rtnS = rtnS.slice(0, -1);
+        rtnS += (parseInt(string[parseInt(x) - 1]) + 1).toString();
+        break;
+      }
+    }
+
+    rtnS += string[x];
+  }
+
+  return rtnS;
 }
 
 //used in checkForPercents
@@ -1481,16 +1509,14 @@ class Calculator extends React.Component {
         disabled_pi: false,
       })
     } else if (e.target.value === "SIN") {
-      if (digits.includes(getLetter(this.state.string, -1)) === false) {
-        this.setState({
-          string: this.state.string + e.target.value + "(",
-          disabled: false,
-          disabled_counter: this.state.disabled_counter + 1,
-          disabled_operators: true,
-          disabled_enter: true,
-          disabled_pi: false,
-        })
-      }
+      this.setState({
+        string: this.state.string + e.target.value + "(",
+        disabled: false,
+        disabled_counter: this.state.disabled_counter + 1,
+        disabled_operators: true,
+        disabled_enter: true,
+        disabled_pi: false,
+      })
     } else if (e.target.value === ")") {
       if (count(this.state.string, '(') >= 1) {
         this.setState({
@@ -2262,6 +2288,19 @@ class Calculator extends React.Component {
             disabled_dot: true,
           })
         }
+      }
+      if (string_2 === "%") {
+        this.setState({
+          disabled_enter: false,
+          disabled_operators: false,
+          disabled_minus: false,
+          disabled_pi: false,
+        })
+      }
+      if (string_2 === "-") {
+        this.setState({
+          disabled_minus: true,
+        })
       }
     }
   }
@@ -3363,6 +3402,19 @@ class Calculator extends React.Component {
           disabled_enter: true,
           disabled_percent: true,
           disabled_pi: false
+        })
+      }
+      if (string_2 === "%") {
+        this.setState({
+          disabled_enter: false,
+          disabled_operators: false,
+          disabled_minus: false,
+          disabled_pi: false,
+        })
+      }
+      if (string_2 === "-") {
+        this.setState({
+          disabled_minus: true,
         })
       }
     }
